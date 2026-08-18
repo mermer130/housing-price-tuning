@@ -11,7 +11,7 @@ python scaffold.py
 ## Steps
 
 - [x] **2.** standardize_numeric
-- [ ] **3.** one_hot_encode
+- [x] **3.** one_hot_encode
 - [ ] **4.** build_features
 - [ ] **5.** example_kernel
 - [ ] **6.** example_kernel
