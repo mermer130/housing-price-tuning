@@ -32,8 +32,16 @@ def standardize_numeric(df: pd.DataFrame) -> pd.DataFrame:
         df_copy[col] = standardized
     return df_copy
 
-# Step 3 - one_hot_encode (not yet solved)
-# TODO: implement
+# Step 3 - one_hot_encode
+import pandas as pd
+
+def one_hot_encode(cats: pd.Series, vocab: list) -> pd.DataFrame:
+    """按 vocab 顺序独热编码，缺失当一类。"""
+    n = len(cats)
+    df = pd.DataFrame(0.0, index=cats.index, columns=vocab)
+    for val in vocab:
+        df[val] = (cats == val).astype(float)
+    return df
 
 # Step 4 - build_features (not yet solved)
 # TODO: implement
