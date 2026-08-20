@@ -18,5 +18,5 @@ python scaffold.py
 - [ ] **7.** train_housing
 - [x] **8.** log_rmse
 - [x] **9.** log_rmse
-- [ ] **10.** compare_optimizers
+- [x] **10.** log_rmse
 - [ ] **11.** tuning_report
