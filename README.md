@@ -14,7 +14,7 @@ python scaffold.py
 - [ ] **3.** one_hot_encode
 - [ ] **4.** build_features
 - [x] **5.** get_net
-- [ ] **6.** example_kernel
+- [x] **6.** log_rmse
 - [ ] **7.** example_kernel
 - [ ] **8.** example_kernel
 - [ ] **9.** best_learning_rate
