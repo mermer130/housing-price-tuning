@@ -4,8 +4,22 @@
 Assembled from your step-by-step solutions.
 """
 
-# Step 2 - standardize_numeric (not yet solved)
-# TODO: implement
+# Step 2 - standardize_numeric
+import pandas as pd
+
+def standardize_numeric(df: pd.DataFrame) -> pd.DataFrame:
+    """对每列做 (x‑mean)/std (pandas 默认 ddof=1)，再 fillna(0)。"""
+    out = df.copy()
+    for col in out.columns:
+        mu = out[col].mean(skipna=True)
+        sigma = out[col].std(ddof=1, skipna=True)
+        if sigma == 0 or pd.isna(sigma):
+            out[col] = 0.0
+        else:
+            out[col] = (out[col] - mu) / sigma
+    out = out.fillna(0.0)
+    out = out.round(6)
+    return out
 
 # Step 3 - one_hot_encode (not yet solved)
 # TODO: implement
