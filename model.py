@@ -86,8 +86,51 @@ def log_rmse(net: nn.Module, features: torch.Tensor, labels: torch.Tensor) -> fl
         rmse = torch.sqrt(mse)
     return float(rmse)
 
-# Step 7 - train_housing (not yet solved)
-# TODO: implement
+# Step 7 - train_housing
+import torch
+import torch.nn as nn
+from torch.utils.data import TensorDataset, DataLoader
+
+def train_housing(
+    X: "torch.Tensor",
+    y: "torch.Tensor",
+    num_epochs: int = 20,
+    lr: float = 0.05,
+    weight_decay: float = 0.0,
+    batch_size: int = 16,
+    seed: int = 0,
+) -> float:
+    torch.manual_seed(seed)
+    X = X.float()
+    y = y.float().reshape(-1, 1)
+    n_feat = X.shape[1]
+
+    model = nn.Linear(n_feat, 1)
+    nn.init.normal_(model.weight, mean=0.0, std=0.01)
+    nn.init.normal_(model.bias, mean=0.0, std=0.01)
+
+    dataset = TensorDataset(X, y)
+    loader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
+    criterion = nn.MSELoss()
+
+    for _ in range(num_epochs):
+        model.train()
+        for bx, by in loader:
+            optimizer.zero_grad()
+            pred = model(bx)
+            loss = criterion(pred, by)
+            loss.backward()
+            optimizer.step()
+
+    model.eval()
+    with torch.no_grad():
+        pred_all = model(X)
+        pred_clamped = pred_all.clamp(min=1.0)
+        log_pred = torch.log(pred_clamped)
+        log_y = torch.log(y)
+        rmse = torch.sqrt(torch.mean((log_pred - log_y) ** 2))
+    return float(rmse)
 
 # Step 8 - log_rmse
 import torch
