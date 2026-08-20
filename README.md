@@ -15,7 +15,7 @@ python scaffold.py
 - [x] **4.** standardize_numeric
 - [x] **5.** get_net
 - [x] **6.** log_rmse
-- [ ] **7.** train_housing
+- [x] **7.** train_housing
 - [x] **8.** log_rmse
 - [x] **9.** log_rmse
 - [x] **10.** log_rmse
