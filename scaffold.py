@@ -7,7 +7,7 @@ Uses functions defined in model.py.
 from model import *  # noqa: F401, F403
 
 def main():
-    print("loaded one_hot_encode from model.py")
+    print("loaded get_net from model.py")
 
 if __name__ == "__main__":
     main()
