@@ -11,8 +11,8 @@ python scaffold.py
 ## Steps
 
 - [x] **2.** standardize_numeric
-- [ ] **3.** one_hot_encode
-- [ ] **4.** build_features
+- [x] **3.** one_hot_encode
+- [x] **4.** standardize_numeric
 - [x] **5.** get_net
 - [x] **6.** log_rmse
 - [ ] **7.** train_housing
