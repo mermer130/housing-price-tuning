@@ -4,38 +4,24 @@
 Assembled from your step-by-step solutions.
 """
 
-# Step 2 - standardize_numeric
-import pandas as pd
-import numpy as np
+# Step 2 - standardize_numeric (not yet solved)
+# TODO: implement
 
-def standardize_numeric(df: pd.DataFrame) -> pd.DataFrame:
-    out = df.copy().astype(float)
-    for col in out.columns:
-        s = out[col]
-        mu = s.mean(skipna=True)
-        sigma = s.std(skipna=True, ddof=1)
-        if not np.isfinite(sigma) or sigma == 0:
-            out[col] = 0.0
-        else:
-            out[col] = (s - mu) / sigma
-    return out.fillna(0.0)
-
-# Step 3 - one_hot_encode
-import pandas as pd
-
-def one_hot_encode(cats: pd.Series, vocab: list) -> pd.DataFrame:
-    """按 vocab 顺序独热编码，缺失当一类。"""
-    n = len(cats)
-    df = pd.DataFrame(0.0, index=cats.index, columns=vocab)
-    for val in vocab:
-        df[val] = (cats == val).astype(float)
-    return df
+# Step 3 - one_hot_encode (not yet solved)
+# TODO: implement
 
 # Step 4 - build_features (not yet solved)
 # TODO: implement
 
-# Step 5 - example_kernel (not yet solved)
-# TODO: implement
+# Step 5 - get_net
+import torch
+import torch.nn as nn
+
+def get_net(n_features: int) -> nn.Module:
+    layer = nn.Linear(n_features, 1)
+    nn.init.normal_(layer.weight, mean=0, std=0.01)
+    nn.init.normal_(layer.bias, mean=0, std=0.01)
+    return layer
 
 # Step 6 - example_kernel (not yet solved)
 # TODO: implement
