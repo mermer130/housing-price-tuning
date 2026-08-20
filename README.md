@@ -16,7 +16,7 @@ python scaffold.py
 - [x] **5.** get_net
 - [x] **6.** log_rmse
 - [ ] **7.** train_housing
-- [ ] **8.** compare_losses
+- [x] **8.** log_rmse
 - [x] **9.** log_rmse
 - [ ] **10.** compare_optimizers
 - [ ] **11.** tuning_report
