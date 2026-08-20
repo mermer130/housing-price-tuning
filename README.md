@@ -15,8 +15,8 @@ python scaffold.py
 - [ ] **4.** build_features
 - [x] **5.** get_net
 - [x] **6.** log_rmse
-- [ ] **7.** example_kernel
-- [ ] **8.** example_kernel
-- [ ] **9.** best_learning_rate
-- [ ] **10.** example_kernel
-- [ ] **11.** example_kernel
+- [ ] **7.** train_housing
+- [ ] **8.** compare_losses
+- [x] **9.** log_rmse
+- [ ] **10.** compare_optimizers
+- [ ] **11.** tuning_report
