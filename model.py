@@ -23,8 +23,19 @@ def get_net(n_features: int) -> nn.Module:
     nn.init.normal_(layer.bias, mean=0, std=0.01)
     return layer
 
-# Step 6 - example_kernel (not yet solved)
-# TODO: implement
+# Step 6 - log_rmse
+import torch
+import torch.nn as nn
+
+def log_rmse(net: nn.Module, features: torch.Tensor, labels: torch.Tensor) -> float:
+    with torch.no_grad():
+        pred = net(features)
+        clipped = torch.max(pred, torch.tensor(1.0))
+        log_pred = torch.log(clipped)
+        log_label = torch.log(labels)
+        mse = torch.mean(torch.square(log_pred - log_label))
+        rmse = torch.sqrt(mse)
+    return float(rmse)
 
 # Step 7 - example_kernel (not yet solved)
 # TODO: implement
