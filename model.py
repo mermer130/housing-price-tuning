@@ -224,5 +224,72 @@ def compare_optimizers(
 
     return (log_rmse_adam, log_rmse_sgd)
 
-# Step 11 - tuning_report (not yet solved)
-# TODO: implement
+# Step 11 - log_rmse
+import torch
+import torch.nn as nn
+from torch.utils.data import TensorDataset, DataLoader
+
+def log_rmse(net: nn.Module, features: torch.Tensor, labels: torch.Tensor) -> float:
+    with torch.no_grad():
+        pred = net(features)
+        clipped = torch.max(pred, torch.tensor(1.0, device=pred.device))
+        log_pred = torch.log(clipped)
+        log_y = torch.log(labels)
+        mse_val = torch.mean(torch.square(log_pred - log_y))
+        rmse_val = torch.sqrt(mse_val)
+    return float(rmse_val)
+
+def make_net(n_features: int, init_type: str):
+    net = nn.Linear(n_features, 1)
+    if init_type == "normal":
+        nn.init.normal_(net.weight, mean=0, std=0.01)
+        nn.init.normal_(net.bias, mean=0, std=0.01)
+    elif init_type == "xavier":
+        nn.init.xavier_uniform_(net.weight)
+        nn.init.zeros_(net.bias)
+    return net
+
+def train_once(X_train, y_train, X_eval, y_eval, n_features, init_type, seed, epochs, lr=0.05, batch_size=16):
+    torch.manual_seed(seed)
+    net = make_net(n_features, init_type)
+    dataset = TensorDataset(X_train, y_train)
+    loader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+    opt = torch.optim.Adam(net.parameters(), lr=lr)
+    crit = nn.MSELoss()
+    for _ in range(epochs):
+        for bx, by in loader:
+            opt.zero_grad()
+            out = net(bx)
+            loss = crit(out, by)
+            loss.backward()
+            opt.step()
+    return log_rmse(net, X_eval, y_eval)
+
+def tuning_report(
+    X: "torch.Tensor",
+    y: "torch.Tensor",
+    k: int = 3,
+    seed: int = 0,
+) -> tuple:
+    X = X.float()
+    y = y.float()
+    y = y.reshape(-1, 1)
+    n, n_features = X.shape
+
+    rmse_normal = train_once(X, y, X, y, n_features, "normal", seed, 12)
+    rmse_xavier = train_once(X, y, X, y, n_features, "xavier", seed + 1, 12)
+    rmse_short = train_once(X, y, X, y, n_features, "normal", seed + 2, 8)
+    rmse_long = train_once(X, y, X, y, n_features, "normal", seed + 3, 20)
+
+    fold_rmses = []
+    for fold in range(k):
+        val_mask = torch.tensor([i % k == fold for i in range(n)])
+        train_mask = ~val_mask
+        X_tr, y_tr = X[train_mask], y[train_mask]
+        X_val, y_val = X[val_mask], y[val_mask]
+        fold_seed = seed + 10 + fold
+        val_rmse = train_once(X_tr, y_tr, X_val, y_val, n_features, "normal", fold_seed, 10)
+        fold_rmses.append(val_rmse)
+    kfold_mean = sum(fold_rmses) / len(fold_rmses)
+
+    return (rmse_normal, rmse_xavier, rmse_short, rmse_long, kfold_mean)
