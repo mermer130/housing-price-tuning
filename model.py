@@ -21,11 +21,46 @@ def standardize_numeric(df: pd.DataFrame) -> pd.DataFrame:
     out = out.round(6)
     return out
 
-# Step 3 - one_hot_encode (not yet solved)
-# TODO: implement
+# Step 3 - one_hot_encode
+import pandas as pd
 
-# Step 4 - build_features (not yet solved)
-# TODO: implement
+def one_hot_encode(cats: pd.Series, vocab: list) -> pd.DataFrame:
+    """按 vocab 列序独热编码，缺失当一类；词表外取值填0。"""
+    n = len(cats)
+    df = pd.DataFrame(0.0, index=cats.index, columns=vocab)
+    for col in vocab:
+        df[col] = (cats == col).astype(float)
+    df = df.round(6)
+    return df
+
+# Step 4 - standardize_numeric
+import pandas as pd
+
+def standardize_numeric(df: pd.DataFrame) -> pd.DataFrame:
+    out = df.copy()
+    for col in out.columns:
+        mu = out[col].mean(skipna=True)
+        sigma = out[col].std(ddof=1, skipna=True)
+        if sigma == 0 or pd.isna(sigma):
+            out[col] = 0.0
+        else:
+            out[col] = (out[col] - mu) / sigma
+    out = out.fillna(0.0)
+    return out
+
+def one_hot_encode(cats: pd.Series, vocab: list) -> pd.DataFrame:
+    df = pd.DataFrame(0.0, index=cats.index, columns=vocab)
+    for col in vocab:
+        df[col] = (cats == col).astype(float)
+    return df
+
+def build_features(num_df: pd.DataFrame, cats: pd.Series, vocab: list) -> pd.DataFrame:
+    """数值列标准化后与独热按列拼接。"""
+    num_part = standardize_numeric(num_df)
+    cat_part = one_hot_encode(cats, vocab)
+    result = pd.concat([num_part, cat_part], axis=1)
+    result = result.round(6)
+    return result
 
 # Step 5 - get_net
 import torch
