@@ -10,7 +10,7 @@ python scaffold.py
 
 ## Steps
 
-- [ ] **2.** standardize_numeric
+- [x] **2.** standardize_numeric
 - [ ] **3.** one_hot_encode
 - [ ] **4.** build_features
 - [x] **5.** get_net
