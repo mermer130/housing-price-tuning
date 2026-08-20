@@ -159,8 +159,70 @@ def best_learning_rate(
             best_lr = lr
     return best_lr
 
-# Step 10 - compare_optimizers (not yet solved)
-# TODO: implement
+# Step 10 - log_rmse
+import torch
+import torch.nn as nn
+from torch.utils.data import TensorDataset, DataLoader
+
+def log_rmse(net: nn.Module, features: torch.Tensor, labels: torch.Tensor) -> float:
+    with torch.no_grad():
+        pred = net(features)
+        clipped = torch.max(pred, torch.tensor(1.0, device=pred.device))
+        log_pred = torch.log(clipped)
+        log_y = torch.log(labels)
+        mse_val = torch.mean(torch.square(log_pred - log_y))
+        rmse_val = torch.sqrt(mse_val)
+    return float(rmse_val)
+
+def get_net(n_features: int):
+    net = nn.Linear(n_features, 1)
+    nn.init.normal_(net.weight, mean=0, std=0.01)
+    nn.init.normal_(net.bias, mean=0, std=0.01)
+    return net
+
+def compare_optimizers(
+    X: "torch.Tensor",
+    y: "torch.Tensor",
+    num_epochs: int = 15,
+    lr: float = 0.05,
+    batch_size: int = 16,
+    seed: int = 0,
+) -> tuple:
+    X = X.float()
+    y = y.float()
+    y = y.reshape(-1, 1)
+    dataset = TensorDataset(X, y)
+
+    # Adam seed
+    torch.manual_seed(seed)
+    net_adam = get_net(X.shape[1])
+    loader_adam = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+    opt_adam = torch.optim.Adam(net_adam.parameters(), lr=lr)
+    crit = nn.MSELoss()
+    for _ in range(num_epochs):
+        for bx, by in loader_adam:
+            opt_adam.zero_grad()
+            out = net_adam(bx)
+            loss = crit(out, by)
+            loss.backward()
+            opt_adam.step()
+    log_rmse_adam = log_rmse(net_adam, X, y)
+
+    # SGD seed+1
+    torch.manual_seed(seed + 1)
+    net_sgd = get_net(X.shape[1])
+    loader_sgd = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+    opt_sgd = torch.optim.SGD(net_sgd.parameters(), lr=lr)
+    for _ in range(num_epochs):
+        for bx, by in loader_sgd:
+            opt_sgd.zero_grad()
+            out = net_sgd(bx)
+            loss = crit(out, by)
+            loss.backward()
+            opt_sgd.step()
+    log_rmse_sgd = log_rmse(net_sgd, X, y)
+
+    return (log_rmse_adam, log_rmse_sgd)
 
 # Step 11 - tuning_report (not yet solved)
 # TODO: implement
