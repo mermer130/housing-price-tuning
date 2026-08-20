@@ -19,4 +19,4 @@ python scaffold.py
 - [x] **8.** log_rmse
 - [x] **9.** log_rmse
 - [x] **10.** log_rmse
-- [ ] **11.** tuning_report
+- [x] **11.** log_rmse
